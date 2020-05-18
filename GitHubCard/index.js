@@ -28,7 +28,7 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -58,3 +58,78 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+let myGitHubAcct;
+const cardList = document.querySelector('.cards');
+axios.get('http://api.github.com/users/sarahmarie1976').then((response) => {
+	myGitHubAcct = response.data;
+	console.log(response.data);
+
+	cardList.append(myCardMaker(myGitHubAcct));
+});
+
+const followersArray = [
+	'tetondan',
+	'dustinmyers',
+	'justsml',
+	'luishrd',
+	'bigknell',
+];
+
+followersArray.forEach((user) => {
+	axios.get(`http://api.github.com/users/${user}`).then((response) => {
+		cardList.append(myCardMaker(response.data));
+	});
+});
+
+const myCardMaker = function (user) {
+	let card = document.createElement('div');
+	let cardImg = document.createElement('img');
+	let cardInfo = document.createElement('div');
+	let cardName = document.createElement('h3');
+	let cardUName = document.createElement('p');
+	let cardLocation = document.createElement('p');
+	let cardLink = document.createElement('p');
+	let cardLink1 = document.createElement('a');
+	let cardFollowers = document.createElement('p');
+	let cardFollowing = document.createElement('p');
+	let cardBio = document.createElement('p');
+
+	card.classList.add('card');
+	cardImg.src = user.avatar_url;
+	cardInfo.classList = 'card-info';
+	cardName.classList.add('name');
+	cardUName.classList = 'username';
+	cardLink1.href = user.html_url;
+
+	cardName.textContent = user.name == null ? 'none' : user.name;
+	cardUName.textContent = user.login;
+	cardLocation.textContent = `Location: ${
+		user.location == null ? 'none' : user.location
+	}`;
+	cardLink.textContent = 'Profile:';
+	cardLink1.textContent = user.html_url;
+	cardFollowers.textContent = `Followers: ${user.followers}`;
+	cardFollowing.textContent = `Following: ${user.following}`;
+	cardBio.textContent = `Bio: ${
+		user.bio == null ? 'No Bio Written' : user.bio
+	}`;
+
+	card.append(cardImg);
+	card.append(cardInfo);
+	cardInfo.append(cardName);
+	cardInfo.append(cardUName);
+	cardInfo.append(cardLocation);
+	cardInfo.append(cardLink);
+	cardLink.append(cardLink1);
+	cardInfo.append(cardFollowers);
+	cardInfo.append(cardFollowing);
+	cardInfo.append(cardBio);
+	
+
+	cardImg.addEventListener('click', (event) => {
+		card.classList.toggle('card-show');
+	});
+	return card;
+};
+
